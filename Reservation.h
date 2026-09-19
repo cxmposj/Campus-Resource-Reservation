@@ -5,15 +5,15 @@ using namespace std;
 
 class Reservation {
 
-     private;
+     private:
         string resvID;
         string resvStudentID;
         string resvStudentName;
         string rescResourceID;
         string resvDate;
 
-     public;
-        Reservation():     //It would create a blank reservation with default information
+     public:
+        Reservation();     //It would create a blank reservation with default information
         Reservation(string id, string studentID, string studentName, string resourceID, string date);    //Creates a reservation using the information provided by the user
 
         string getID() const;
