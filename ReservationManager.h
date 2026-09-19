@@ -7,6 +7,8 @@
 #include <iosfwd>
 #include <string>
 
+// Create ONE manager for the entire system, shared by menu, queue, and undo.
+// Its list stores all active reservations across all resources.
 class ReservationManager {
 public:
     // The inventory owner supplies this lookup. It must return true only
@@ -25,6 +27,9 @@ public:
                            std::string& error);
     bool findReservation(const std::string& id, Reservation& found) const;
     bool contains(const std::string& id) const;
+    // O(n) search of active reservations. This checks conflicts only;
+    // false does not validate resource existence or date formatting.
+    bool hasConflict(const std::string& resourceId, const std::string& date) const;
     void displayReservations(std::ostream& out) const;
     std::size_t size() const;
 
