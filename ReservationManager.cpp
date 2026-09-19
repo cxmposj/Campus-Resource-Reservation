@@ -57,6 +57,16 @@ bool ReservationManager::contains(const std::string& id) const {
     return findNode(id) != nullptr;
 }
 
+bool ReservationManager::hasConflict(const std::string& resourceId,
+                                     const std::string& date) const {
+    // Use the single system-wide list, not a separate list per resource.
+    for (const Node* current = head_; current != nullptr; current = current->next) {
+        if (current->data.getResourceID() == resourceId &&
+            current->data.getDate() == date) return true;
+    }
+    return false;
+}
+
 bool ReservationManager::findReservation(const std::string& id,
                                          Reservation& found) const {
     const Node* node = findNode(id);
@@ -93,7 +103,11 @@ bool ReservationManager::createReservation(const Reservation& reservation,
         error = "Resource ID does not exist in the inventory.";
         return false;
     }
-    // Head insertion is O(1); duplicate checking makes creation O(n),
+    if (hasConflict(reservation.getResourceID(), reservation.getDate())) {
+        error = "Resource already has an active reservation on that date.";
+        return false;
+    }
+    // Head insertion is O(1); duplicate and conflict searches make creation O(n),
     // plus the inventory callback cost. Display order is newest first.
     head_ = new Node(reservation, head_);
     ++count_;
