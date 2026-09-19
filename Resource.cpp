@@ -40,12 +40,14 @@ void Resource::setAvailable(bool available) {    //This is used to change the av
 
 void Resource::display() const {
 
-      cout << resID << " | " <<  resName << " | " << resType << " | ";     //It would display all resource information
+      cout << "Resource ID: " << resID << endl;
+      cout << "Resource Name: " << resName << endl;
+      cout << "Resource Type: " << resType << endl; //Displays all information from resource
 
-   if (resAvailable)
-     cout << "Available";
-  else
-     cout << "Not Available";
+      if(resAvailable)
+        cout << "Available" << endl;
+      else
+        cout << "Not Available << endl;
 
 cout << endl;
 }
