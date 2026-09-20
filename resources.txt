@@ -1,0 +1,4 @@
+R001,Study Room 101,Study Room,1
+R002,Computer Lab 201,Computer Lab,1
+R003,Conference Room 301,Conference Room,0
+R004,Study Room 102,Study Room,1
