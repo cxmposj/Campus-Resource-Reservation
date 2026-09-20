@@ -1,0 +1,67 @@
+WAITING QUEUE — INTEGRATION AND COMPLEXITY
+
+Upload WaitingList.h and WaitingList.cpp to the repository root. No existing
+files are replaced. This code uses the existing Reservation getters and the
+updated ReservationManager from pull request #3.
+
+Architecture:
+Create one WaitingList per resource/date pair. This groups students competing
+for the same booking slot and preserves FIFO within that slot. All queues must
+use the ONE shared active ReservationManager. Queue nodes store waiting requests,
+not active reservations. Do not create a ReservationManager per queue.
+
+Construct with:
+WaitingList queue("ROOM101", "2026-09-20", resourceExists);
+resourceExists is the same inventory existence callback used by the manager.
+Any captured inventory must outlive use of the callback. The queue owns its
+nodes and cannot be copied. The team can own dynamic queues using unique_ptr.
+
+Operations:
+enqueue(request, error): append a valid request; rejects duplicate reservation
+IDs and duplicate students within this resource/date queue.
+peek(record): copy the front without removing it.
+dequeue(record): remove and return the front; false when empty.
+display(outputStream): show all waiting requests in FIFO order.
+size(), empty(): report queue state.
+promoteNext(manager, promoted, error): create the oldest queued reservation
+using the shared active manager; remove it from the queue ONLY on success.
+Failed promotion leaves queue and active reservations unchanged. Normal false
+returns leave the output record unchanged. Error strings describe the failure.
+
+Driver responsibilities (driver and history stack are not included):
+1. Validate requests and allocate reservation IDs unique across active records
+   and ALL waiting queues; queue duplicate checking is local to its own queue.
+2. If manager.hasConflict(resourceId, date) is true, enqueue in the matching
+   queue. Other validation failures should be reported, not automatically queued.
+3. After successful cancellation, save the canceled record in the history
+   stack and call promoteNext on that resource/date queue in the same operation.
+   Skip empty queues. Arrange rollback if stack recording can fail.
+4. Undo must peek at history and call manager.createReservation; pop history
+   only after success. A promoted booking can block restoration; report that
+   conflict rather than displacing the new active reservation.
+5. A failed front request is retained rather than skipped. Resolve/report its
+   error before serving later requests. Never silently discard queued students.
+6. Include WaitingList.cpp in the final build. This package adds no main().
+
+Complexity (bounded field lengths; q waiting requests in one queue, n active):
+- Raw rear insertion: O(1).
+- Public enqueue: O(q) plus inventory lookup cost because it scans duplicates.
+- Dequeue, peek, size, empty: O(1).
+- Display, destructor: O(q).
+- promoteNext: O(n) plus inventory lookup cost from createReservation; removing
+  the successful front node takes O(1). Locating the queue adds the cost of the
+  driver's queue registry lookup.
+- Storage: O(q) for a queue; O(total waiting requests) across queues.
+Do not report this validated enqueue operation as O(1).
+
+Verification:
+Compiled against the original team Reservation header with strict C++11 warnings.
+Runtime tests passed with address/undefined-behavior sanitizers using the earlier
+separate corrected Reservation implementation. Tested FIFO, empty operations,
+duplicates, bad fields/dates/resources, slot mismatches, failed/successful
+promotion, ID collisions, reuse after emptying, and destruction of nonempty queues.
+Original teammate compiler errors are not fixed by this package. UNT CELL and
+combined-menu testing remain outstanding. No teammates' files were edited.
+
+Record this as an additional AI-assisted queue contribution if your team uses it,
+following the course's contribution/documentation requirements.
