@@ -47,7 +47,7 @@ void Resource::display() const {
       if(resAvailable)
         cout << "Available" << endl;
       else
-        cout << "Not Available << endl;
+        cout << "Not Available" << endl;
 
 cout << endl;
 }
