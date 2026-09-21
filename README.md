@@ -23,7 +23,12 @@ cancelled reservations.
 
 # How to Compile and Run 
 
-g++ main.cpp Resource.cpp Reservation.cpp ReservationManager.cpp 
+g++-std=c++17 main.cpp Reservation.cpp
+Resource. cp ReservationManager.cpp Waitinglist.cpp CancellationStationStack.cpp -o CampusReservation
+
+Ran: 
+
+./CampusReservation
 
 # Testing
 We tested the resource and reservation functions to make sure the information was being stored and displayed correctly. 
