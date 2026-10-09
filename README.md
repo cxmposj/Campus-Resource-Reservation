@@ -6,7 +6,7 @@ This project is a Campus Resource Reservation System that helps students reserve
 such as study rooms, laptops, calculators, and other resources. It helps keep track of the resources, reservations, waiting lists, and cancellation history. The system also includes searching and sorting features and provides reports on active reservations, resource utilization, and waiting-list information. 
 
 # Team Members Contributions
-1. Jose Campos - implemented Linear Search to find resources by resource ID and Merge sort to sort resources by resource name. Tested the searching and sorting functions to check that they worked correctly with the resource data. Made changes to the README, and made certain everything was added and correct in the GitHub. 
+1. Jose Campos - implemented Linear Search to find resources by resource ID and Merge sort to sort resources by resource name. Tested the searching and sorting functions to check that they worked correctly with the resource data. Made changes to the README, worked on the User Documentation, and made certain everything was added and correct in the GitHub. 
 2. Rj Amuebie - Handled the final testing of the system to make sure the different features work correctly together. Worked on the main and integration of the project components. Reviewed the system's functionality, and helped identify and fix issues during testing and debugging. 
 3. Adeoluwa Olukotun - Worked on the reporting part of the final project, including reports for active reservations, resource usage, and waiting lists. This includes organizing the reservation and waiting-list details and showing how resources are being used and how many students are waiting for each resource. 
 
