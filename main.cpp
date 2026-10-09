@@ -117,6 +117,7 @@ int main()
         {
             cout << endl;
             cout << "===== Active Reservations =====" << endl;
+            cout << "Total active reservations: " << reservationManager.size() << endl;
 
             reservationManager.displayReservations(cout);
         }
