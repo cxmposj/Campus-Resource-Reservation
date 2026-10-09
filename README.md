@@ -3,28 +3,28 @@ Project 1 - Final Submission
 
 # Project Description
 This project is a Campus Resource Reservation System that helps students reserve different campus resources,
-such as study rooms, laptops, calculators, and other resources. It helps keep track of the resources, reservations, waiting lists, and cancellation history. 
+such as study rooms, laptops, calculators, and other resources. It helps keep track of the resources, reservations, waiting lists, and cancellation history. The system also includes searching and sorting features and provides reports on active reservations, resource utilization, and waiting-list information. 
 
 # Team Members Contributions
-1. Jose Campos - Worked on the Resource and Reservation classes. Set up the Reservation class for student and reservation information,
-with functions to access and display. Also implemented Linear Search to find resources by resource ID and Merge sort to sort resources by resource name. Made changes to the README, and made certain everything was added and correct in the GitHub. 
-2. Rj Amuebie - Handled the cancellation history stack and complexity analysis. Adding functions to add, remove, and displayed
-cancelled reservations. Also handled the final testing of the system to make sure the different features work correctly together. 
-3. Adeoluwa Olukotun - Responsible for Reservation Management and the linked list. Handling the creation, cancellation, checking, and display of reservations, including inserting and removing reservation records. Worked on the waiting list features and will handl on the final reporting for the project. 
+1. Jose Campos - implemented Linear Search to find resources by resource ID and Merge sort to sort resources by resource name. Tested the searching and sorting functions to check that they worked correctly with the resource data. Made changes to the README, and made certain everything was added and correct in the GitHub. 
+2. Rj Amuebie - Handled the final testing of the system to make sure the different features work correctly together. Worked on the main and integration of the project components. Reviewed the system's functionality, and helped identify and fix issues during testing and debugging. 
+3. Adeoluwa Olukotun - Worked on the reporting part of the final project, including reports for active reservations, resource usage, and waiting lists. This includes organizing the reservation and waiting-list details and showing how resources are being used and how many students are waiting for each resource. 
 
 # Main Features
-- Manage campus resource information
-- Check resource availability
-- Search for resources by Resource ID
-- Sort resources by Resoucee Name 
-- Create reservations
-- Cancel reservations
-- Display active reservations
-- Manage waiting lists
-- Keep track of cancellation history
+- Manage and display campus resources
+- Search for resources using their resource ID
+- Sort resources alphabetically by resource name
+- Create, display, and cancel reservations
+- Manage waiting lists for unavailable resources
+- Keep a history of canceled reservations
+- Provide reports about reservations, resource usage, and waiting lists 
 
 # Data Structures Used
 The system uses different data structures to organize and manage the information, including a linked list for active reservations, a queue for waiting lists, a stack for cancellation history, and a vector for storing the resources and supporting the searching and sorting functions. 
+
+- Linked List: Stores active reservations
+- Queue: Manages waiting lists
+- Stack: Stores cancellation history
 
 # Searching and Sorting 
 The project uses Linear Search to search for resources by their Resource ID. The search goes through the resources one at at time until it finds a resource with the matching ID or determines that the resource is not in the list, The project also uses Merge Sort to sort the resources by Resource Name, organizing the resources in order so they can be displayed in a organized way. 
@@ -43,7 +43,7 @@ Ran:
 
 # Testing
 We tested the resource and reservation functions to make sure the information was being stored and displayed correctly. 
-We also tested the reservation features and input handling.
+We also tested the reservation features and input handling. 
 
 # GitHub Repository
 https://github.com/cxmposj/Campus-Resource-Reservation
