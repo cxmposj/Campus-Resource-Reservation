@@ -155,3 +155,12 @@ void ReservationManager::displayReservations(std::ostream& out) const {
 }
 
 std::size_t ReservationManager::size() const { return count_; }
+
+
+std::size_t ReservationManager::countForResource(const std::string& resourceId) const {
+    std::size_t total = 0;
+    for (const Node* current = head_; current != nullptr; current = current->next) {
+        if (current->data.getResourceID() == resourceId) ++total;
+    }
+    return total;
+}

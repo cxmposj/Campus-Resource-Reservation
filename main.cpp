@@ -65,6 +65,28 @@ struct WaitingQueue
     unique_ptr<WaitingList> queue;
 };
 
+// Uses current active reservations across all dates, not historical usage.
+// For r resources and n active reservations: O(r*n + r) time, O(1) extra space.
+void displayResourceUtilization(const vector<Resource>& resources,
+                                const ReservationManager& manager,
+                                ostream& out)
+{
+    out << "\n===== Resource Utilization =====\n";
+    out << "Active reservation counts across all dates\n";
+    if (resources.empty())
+    {
+        out << "No resources loaded.\n";
+        return;
+    }
+    for (const Resource& resource : resources)
+    {
+        out << "Resource ID: " << resource.getID()
+            << " | Name: " << resource.getName()
+            << " | Active reservations: " << manager.countForResource(resource.getID())
+            << '\n';
+    }
+}
+
 int main()
 {
     vector<Resource> resources;
@@ -97,6 +119,7 @@ int main()
         cout << "7. Join Waiting List" << endl;
         cout << "8. Display Waiting Lists" << endl;
         cout << "9. Exit" << endl;
+        cout << "10. Resource Utilization Report" << endl;
         cout << "Enter your choice: ";
 
         cin >> choice;
@@ -401,6 +424,11 @@ int main()
                     w.queue->display(cout);
                 }
             }
+        }
+
+        else if (choice == 10)
+        {
+            displayResourceUtilization(resources, reservationManager, cout);
         }
 
         else if (choice == 9)
