@@ -136,6 +136,63 @@ void displayWaitingStatistics(const vector<Resource>& resources,
     if (totalRequests == 0) out << "No students are currently waiting.\n";
 }
 
+// Current demand is active reservations plus waiting requests, across all dates.
+// This is not a lifetime request count: canceled requests no longer contribute.
+// For r resources, n active reservations, k queues: O(r*(n+k+1)) time,
+// O(r) extra space. No resource sorting or queue mutation is needed.
+void displayMostRequestedResources(const vector<Resource>& resources,
+                                   const ReservationManager& manager,
+                                   const vector<WaitingQueue>& waitingLists,
+                                   ostream& out)
+{
+    out << "\n===== Most Requested Resources (Current Demand) =====\n";
+    out << "Count = active reservations + waiting requests across all dates.\n";
+    out << "Historical and canceled requests are not included.\n";
+    if (resources.empty())
+    {
+        out << "No resources loaded.\n";
+        return;
+    }
+
+    vector<size_t> activeCounts;
+    vector<size_t> waitingCounts;
+    activeCounts.reserve(resources.size());
+    waitingCounts.reserve(resources.size());
+    size_t highest = 0;
+    for (const Resource& resource : resources)
+    {
+        size_t active = manager.countForResource(resource.getID());
+        size_t waiting = 0;
+        for (const WaitingQueue& slot : waitingLists)
+        {
+            if (slot.resourceID == resource.getID() && slot.queue)
+                waiting += slot.queue->size();
+        }
+        activeCounts.push_back(active);
+        waitingCounts.push_back(waiting);
+        if (active + waiting > highest) highest = active + waiting;
+    }
+
+    if (highest == 0)
+    {
+        out << "No current requests. No most-requested resource yet.\n";
+        return;
+    }
+    out << "Highest current request count: " << highest << '\n';
+    // Display every resource tied for the maximum, in inventory order.
+    for (size_t i = 0; i < resources.size(); ++i)
+    {
+        if (activeCounts[i] + waitingCounts[i] == highest)
+        {
+            out << "Resource ID: " << resources[i].getID()
+                << " | Name: " << resources[i].getName()
+                << " | Active: " << activeCounts[i]
+                << " | Waiting: " << waitingCounts[i]
+                << " | Total requests: " << highest << '\n';
+        }
+    }
+}
+
 int main()
 {
     vector<Resource> resources;
@@ -170,6 +227,7 @@ int main()
         cout << "9. Exit" << endl;
         cout << "10. Resource Utilization Report" << endl;
         cout << "11. Waiting-List Statistics" << endl;
+        cout << "12. Most Requested Resources (Current Demand)" << endl;
         cout << "Enter your choice: ";
 
         cin >> choice;
@@ -484,6 +542,11 @@ int main()
         else if (choice == 11)
         {
             displayWaitingStatistics(resources, waitingLists, cout);
+        }
+
+        else if (choice == 12)
+        {
+            displayMostRequestedResources(resources, reservationManager, waitingLists, cout);
         }
 
         else if (choice == 9)
