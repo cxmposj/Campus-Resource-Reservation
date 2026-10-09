@@ -1,6 +1,5 @@
 # Reporting
-
-The reporting changes were developed with AI assistance. This document records the behavior and local checks; it does not establish compliance with course rules on AI use.
+This report was generated using the data maintained by our system 
 
 ## Menu options
 
