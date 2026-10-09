@@ -87,6 +87,55 @@ void displayResourceUtilization(const vector<Resource>& resources,
     }
 }
 
+// Aggregate date-specific queues by resource without dequeuing any requests.
+// Distinct student IDs avoid double-counting a student waiting on multiple dates.
+// With r resources, k queues, w requests: O(r*k + w*w + r) worst-case time
+// for a registry containing one queue per resource/date, and O(w) extra space.
+void displayWaitingStatistics(const vector<Resource>& resources,
+                              const vector<WaitingQueue>& waitingLists,
+                              ostream& out)
+{
+    out << "\n===== Waiting-List Statistics =====\n";
+    out << "Students are counted once per resource across all dates.\n";
+    if (resources.empty())
+    {
+        out << "No resources loaded.\n";
+        return;
+    }
+    size_t totalRequests = 0;
+    for (const Resource& resource : resources)
+    {
+        size_t requests = 0;
+        vector<string> students;
+        for (const WaitingQueue& waiting : waitingLists)
+        {
+            if (waiting.resourceID != resource.getID() || !waiting.queue)
+                continue;
+            requests += waiting.queue->size();
+            for (const string& id : waiting.queue->studentIds())
+            {
+                bool alreadyCounted = false;
+                for (const string& previous : students)
+                {
+                    if (previous == id)
+                    {
+                        alreadyCounted = true;
+                        break;
+                    }
+                }
+                if (!alreadyCounted) students.push_back(id);
+            }
+        }
+        out << "Resource ID: " << resource.getID()
+            << " | Name: " << resource.getName()
+            << " | Students waiting: " << students.size()
+            << " | Waiting requests: " << requests << '\n';
+        totalRequests += requests;
+    }
+    out << "Total waiting requests: " << totalRequests << '\n';
+    if (totalRequests == 0) out << "No students are currently waiting.\n";
+}
+
 int main()
 {
     vector<Resource> resources;
@@ -120,6 +169,7 @@ int main()
         cout << "8. Display Waiting Lists" << endl;
         cout << "9. Exit" << endl;
         cout << "10. Resource Utilization Report" << endl;
+        cout << "11. Waiting-List Statistics" << endl;
         cout << "Enter your choice: ";
 
         cin >> choice;
@@ -429,6 +479,11 @@ int main()
         else if (choice == 10)
         {
             displayResourceUtilization(resources, reservationManager, cout);
+        }
+
+        else if (choice == 11)
+        {
+            displayWaitingStatistics(resources, waitingLists, cout);
         }
 
         else if (choice == 9)
