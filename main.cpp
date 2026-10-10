@@ -410,7 +410,33 @@ int main()
             cout << "Enter Resource ID to search: ";
             getline(cin, id);
 
-            int index = search
+            int index = searchResources(resources, id);
+
+            if(index != -1){
+                cout << endl << "Resource found:" << endl;
+                resources[index].display();
+            }
+            else 
+            { 
+                cout << "Resource not found." << endl;
+            }
+        }
+        else if (choice == 10)
+        {
+            if(!resources.empty())
+            { 
+                mergeSortResources(resources, 0, static_cast<int>(resources.size()) - 1);
+                cout << endl << "Resources sorted by name:" << endl;
+
+                for (const Resource& r : resources) {
+                    r.display();
+                }
+            }
+            else 
+            {
+                cout << "There are no resources to sort." << endl;
+            }
+        }
 
         else if (choice == 11)
         {
