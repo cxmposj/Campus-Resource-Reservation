@@ -10,6 +10,7 @@
 #include "ReservationManager.h"
 #include "WaitingList.h"
 #include "CancellationStack.h"
+#include "ResourceSearchSort.h"
 
 using namespace std;
 
@@ -96,7 +97,9 @@ int main()
         cout << "6. Undo Cancellation" << endl;
         cout << "7. Join Waiting List" << endl;
         cout << "8. Display Waiting Lists" << endl;
-        cout << "9. Exit" << endl;
+        cout << "9. Search Resource" << endl; 
+        cout << "10. Sort Resources by Name" << endl;
+        cout << "11. Exit" << endl;
         cout << "Enter your choice: ";
 
         cin >> choice;
@@ -401,8 +404,15 @@ int main()
                 }
             }
         }
-
         else if (choice == 9)
+        {
+            string id;
+            cout << "Enter Resource ID to search: ";
+            getline(cin, id);
+
+            int index = search
+
+        else if (choice == 11)
         {
             cout << "Goodbye!" << endl;
         }
@@ -412,7 +422,7 @@ int main()
             cout << "Invalid choice." << endl;
         }
 
-    } while (choice != 9);
+    } while (choice != 11);
 
     return 0;
 }
