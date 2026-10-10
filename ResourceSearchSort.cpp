@@ -20,7 +20,7 @@ void mergeResources(vector<Resource>& resources, int left, int mid, int right){ 
     for(int i = 0; i < leftSize; i++) {
         leftResources[i] = resources[left + i];
     }                                                   // Copies the left and right half of the resources
-    for (int i = i; i < rightSize; i++){
+    for (int i = 0; i < rightSize; i++){
         rightResources[i] = resources[mid + 1 + i];
     }
 
