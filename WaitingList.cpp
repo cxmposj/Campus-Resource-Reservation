@@ -131,3 +131,12 @@ void WaitingList::display(std::ostream& out) const {
 }
 bool WaitingList::empty() const { return front_ == nullptr; }
 std::size_t WaitingList::size() const { return count_; }
+
+
+std::vector<std::string> WaitingList::studentIds() const {
+    std::vector<std::string> ids;
+    ids.reserve(count_);
+    for (const Node* current = front_; current != nullptr; current = current->next)
+        ids.push_back(current->data.getStudentID());
+    return ids;
+}

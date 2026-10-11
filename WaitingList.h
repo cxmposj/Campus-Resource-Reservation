@@ -6,6 +6,7 @@
 #include <functional>
 #include <iosfwd>
 #include <string>
+#include <vector>
 
 class ReservationManager;
 
@@ -26,6 +27,8 @@ public:
     void display(std::ostream& out) const;
     bool empty() const;
     std::size_t size() const;
+    // Read-only snapshot for reports: O(q) time and space; preserves FIFO order.
+    std::vector<std::string> studentIds() const;
 
     // Call after this resource/date becomes free. Removes the front ONLY
     // after active reservation creation succeeds; failed requests stay queued.

@@ -32,6 +32,8 @@ public:
     bool hasConflict(const std::string& resourceId, const std::string& date) const;
     void displayReservations(std::ostream& out) const;
     std::size_t size() const;
+    // Count active reservations for one resource: O(n) time, O(1) extra space.
+    std::size_t countForResource(const std::string& resourceId) const;
 
 private:
     struct Node {

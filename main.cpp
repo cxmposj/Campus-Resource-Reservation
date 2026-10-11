@@ -66,6 +66,134 @@ struct WaitingQueue
     unique_ptr<WaitingList> queue;
 };
 
+// Uses current active reservations across all dates, not historical usage.
+// For r resources and n active reservations: O(r*n + r) time, O(1) extra space.
+void displayResourceUtilization(const vector<Resource>& resources,
+                                const ReservationManager& manager,
+                                ostream& out)
+{
+    out << "\n===== Resource Utilization =====\n";
+    out << "Active reservation counts across all dates\n";
+    if (resources.empty())
+    {
+        out << "No resources loaded.\n";
+        return;
+    }
+    for (const Resource& resource : resources)
+    {
+        out << "Resource ID: " << resource.getID()
+            << " | Name: " << resource.getName()
+            << " | Active reservations: " << manager.countForResource(resource.getID())
+            << '\n';
+    }
+}
+
+// Aggregate date-specific queues by resource without dequeuing any requests.
+// Distinct student IDs avoid double-counting a student waiting on multiple dates.
+// With r resources, k queues, w requests: O(r*k + w*w + r) worst-case time
+// for a registry containing one queue per resource/date, and O(w) extra space.
+void displayWaitingStatistics(const vector<Resource>& resources,
+                              const vector<WaitingQueue>& waitingLists,
+                              ostream& out)
+{
+    out << "\n===== Waiting-List Statistics =====\n";
+    out << "Students are counted once per resource across all dates.\n";
+    if (resources.empty())
+    {
+        out << "No resources loaded.\n";
+        return;
+    }
+    size_t totalRequests = 0;
+    for (const Resource& resource : resources)
+    {
+        size_t requests = 0;
+        vector<string> students;
+        for (const WaitingQueue& waiting : waitingLists)
+        {
+            if (waiting.resourceID != resource.getID() || !waiting.queue)
+                continue;
+            requests += waiting.queue->size();
+            for (const string& id : waiting.queue->studentIds())
+            {
+                bool alreadyCounted = false;
+                for (const string& previous : students)
+                {
+                    if (previous == id)
+                    {
+                        alreadyCounted = true;
+                        break;
+                    }
+                }
+                if (!alreadyCounted) students.push_back(id);
+            }
+        }
+        out << "Resource ID: " << resource.getID()
+            << " | Name: " << resource.getName()
+            << " | Students waiting: " << students.size()
+            << " | Waiting requests: " << requests << '\n';
+        totalRequests += requests;
+    }
+    out << "Total waiting requests: " << totalRequests << '\n';
+    if (totalRequests == 0) out << "No students are currently waiting.\n";
+}
+
+// Current demand is active reservations plus waiting requests, across all dates.
+// This is not a lifetime request count: canceled requests no longer contribute.
+// For r resources, n active reservations, k queues: O(r*(n+k+1)) time,
+// O(r) extra space. No resource sorting or queue mutation is needed.
+void displayMostRequestedResources(const vector<Resource>& resources,
+                                   const ReservationManager& manager,
+                                   const vector<WaitingQueue>& waitingLists,
+                                   ostream& out)
+{
+    out << "\n===== Most Requested Resources (Current Demand) =====\n";
+    out << "Count = active reservations + waiting requests across all dates.\n";
+    out << "Historical and canceled requests are not included.\n";
+    if (resources.empty())
+    {
+        out << "No resources loaded.\n";
+        return;
+    }
+
+    vector<size_t> activeCounts;
+    vector<size_t> waitingCounts;
+    activeCounts.reserve(resources.size());
+    waitingCounts.reserve(resources.size());
+    size_t highest = 0;
+    for (const Resource& resource : resources)
+    {
+        size_t active = manager.countForResource(resource.getID());
+        size_t waiting = 0;
+        for (const WaitingQueue& slot : waitingLists)
+        {
+            if (slot.resourceID == resource.getID() && slot.queue)
+                waiting += slot.queue->size();
+        }
+        activeCounts.push_back(active);
+        waitingCounts.push_back(waiting);
+        if (active + waiting > highest) highest = active + waiting;
+    }
+
+    if (highest == 0)
+    {
+        out << "No current requests. No most-requested resource yet.\n";
+        return;
+    }
+    out << "Highest current request count: " << highest << '\n';
+    // Display every resource tied for the maximum, in inventory order.
+    for (size_t i = 0; i < resources.size(); ++i)
+    {
+        if (activeCounts[i] + waitingCounts[i] == highest)
+        {
+            out << "Resource ID: " << resources[i].getID()
+                << " | Name: " << resources[i].getName()
+                << " | Active: " << activeCounts[i]
+                << " | Waiting: " << waitingCounts[i]
+                << " | Total requests: " << highest << '\n';
+        }
+    }
+}
+
 int main()
 {
     vector<Resource> resources;
@@ -100,6 +228,9 @@ int main()
         cout << "9. Search Resource" << endl; 
         cout << "10. Sort Resources by Name" << endl;
         cout << "11. Exit" << endl;
+        cout << "12. Resource Utilization Report" << endl;
+        cout << "13. Waiting-List Statistics" << endl;
+        cout << "14. Most Requested Resources (Current Demand)" << endl;
         cout << "Enter your choice: ";
 
         cin >> choice;
@@ -121,6 +252,7 @@ int main()
             cout << endl;
             cout << "===== Active Reservations =====" << endl;
 
+            cout << "Total active reservations: " << reservationManager.size() << endl;
             reservationManager.displayReservations(cout);
         }
 
@@ -436,6 +568,19 @@ int main()
             {
                 cout << "There are no resources to sort." << endl;
             }
+        }
+
+        else if (choice == 12)
+        {
+            displayResourceUtilization(resources, reservationManager, cout);
+        }
+        else if (choice == 13)
+        {
+            displayWaitingStatistics(resources, waitingLists, cout);
+        }
+        else if (choice == 14)
+        {
+            displayMostRequestedResources(resources, reservationManager, waitingLists, cout);
         }
 
         else if (choice == 11)
