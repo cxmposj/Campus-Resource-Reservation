@@ -10,6 +10,7 @@
 #include "ReservationManager.h"
 #include "WaitingList.h"
 #include "CancellationStack.h"
+#include "ResourceSearchSort.h"
 
 using namespace std;
 
@@ -224,10 +225,12 @@ int main()
         cout << "6. Undo Cancellation" << endl;
         cout << "7. Join Waiting List" << endl;
         cout << "8. Display Waiting Lists" << endl;
-        cout << "9. Exit" << endl;
-        cout << "10. Resource Utilization Report" << endl;
-        cout << "11. Waiting-List Statistics" << endl;
-        cout << "12. Most Requested Resources (Current Demand)" << endl;
+        cout << "9. Search Resource" << endl; 
+        cout << "10. Sort Resources by Name" << endl;
+        cout << "11. Exit" << endl;
+        cout << "12. Resource Utilization Report" << endl;
+        cout << "13. Waiting-List Statistics" << endl;
+        cout << "14. Most Requested Resources (Current Demand)" << endl;
         cout << "Enter your choice: ";
 
         cin >> choice;
@@ -248,8 +251,8 @@ int main()
         {
             cout << endl;
             cout << "===== Active Reservations =====" << endl;
-            cout << "Total active reservations: " << reservationManager.size() << endl;
 
+            cout << "Total active reservations: " << reservationManager.size() << endl;
             reservationManager.displayReservations(cout);
         }
 
@@ -533,23 +536,54 @@ int main()
                 }
             }
         }
+        else if (choice == 9)
+        {
+            string id;
+            cout << "Enter Resource ID to search: ";
+            getline(cin, id);
 
+            int index = searchResources(resources, id);
+
+            if(index != -1){
+                cout << endl << "Resource found:" << endl;
+                resources[index].display();
+            }
+            else 
+            { 
+                cout << "Resource not found." << endl;
+            }
+        }
         else if (choice == 10)
         {
-            displayResourceUtilization(resources, reservationManager, cout);
-        }
+            if(!resources.empty())
+            { 
+                mergeSortResources(resources, 0, static_cast<int>(resources.size()) - 1);
+                cout << endl << "Resources sorted by name:" << endl;
 
-        else if (choice == 11)
-        {
-            displayWaitingStatistics(resources, waitingLists, cout);
+                for (const Resource& r : resources) {
+                    r.display();
+                }
+            }
+            else 
+            {
+                cout << "There are no resources to sort." << endl;
+            }
         }
 
         else if (choice == 12)
         {
+            displayResourceUtilization(resources, reservationManager, cout);
+        }
+        else if (choice == 13)
+        {
+            displayWaitingStatistics(resources, waitingLists, cout);
+        }
+        else if (choice == 14)
+        {
             displayMostRequestedResources(resources, reservationManager, waitingLists, cout);
         }
 
-        else if (choice == 9)
+        else if (choice == 11)
         {
             cout << "Goodbye!" << endl;
         }
@@ -559,7 +593,7 @@ int main()
             cout << "Invalid choice." << endl;
         }
 
-    } while (choice != 9);
+    } while (choice != 11);
 
     return 0;
 }
